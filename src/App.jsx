@@ -21,8 +21,8 @@ const router = createBrowserRouter(routes);
 
 const App = () => {
   return (
-    <div className="absolute flex items-center justify-center left-0 top-0 right-0 bottom-0 bg-233142">
-      <div className="w-[376px] h-[666px] bg-white rounded-lg shadow-md">
+    <div className="absolute flex items-center justify-center left-0 top-0 right-0 bottom-0 bg-[#2c4058] ">
+      <div className="w-[376px] h-[666px]  bg-gray-100 rounded-lg shadow-md overflow-y-scroll">
         <Header />
         <RouterProvider router={router} />
       </div>
