@@ -12,7 +12,7 @@ const routes = [
     errorElement: <ErrorPage />,
   },
   {
-    path: "id",
+    path: "details/:id",
     element: <Details />,
   },
 ];
@@ -21,9 +21,11 @@ const router = createBrowserRouter(routes);
 
 const App = () => {
   return (
-    <div className="container">
-      <Header />
-      <RouterProvider router={router} />
+    <div className="absolute flex items-center justify-center left-0 top-0 right-0 bottom-0 bg-233142">
+      <div className="w-[376px] h-[666px] bg-white rounded-lg shadow-md">
+        <Header />
+        <RouterProvider router={router} />
+      </div>
     </div>
   );
 };
