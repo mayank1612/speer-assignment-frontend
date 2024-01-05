@@ -15,7 +15,7 @@ const Activity = () => {
   const [value, setValue] = useState(NOT_ARCHIVED_CALLS_TAB_INDEX);
   const [callHistory, setCallHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [resetArchivedCalls, setResetArchivedCalls] = useState(false);
+  const [isReset, setIsReset] = useState(false);
   const [isResetBtnLoading, setIsResetBtnLoading] = useState(false);
 
   const isArchivedTab = value === ARCHIVED_CALLS_TAB_INDEX;
@@ -33,8 +33,13 @@ const Activity = () => {
 
     // Redirect to Inbox tab
     setTimeout(() => {
+      setIsReset(false);
       setIsResetBtnLoading(false);
-      setValue(NOT_ARCHIVED_CALLS_TAB_INDEX);
+      setValue(
+        value === NOT_ARCHIVED_CALLS_TAB_INDEX
+          ? ARCHIVED_CALLS_TAB_INDEX
+          : NOT_ARCHIVED_CALLS_TAB_INDEX
+      );
     }, 2000);
   }
 
@@ -43,10 +48,10 @@ const Activity = () => {
   }, [value]);
 
   useEffect(() => {
-    if (resetArchivedCalls) {
+    if (isReset) {
       resetAllArchivedCalls();
     }
-  }, [resetArchivedCalls]);
+  }, [isReset]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -97,21 +102,6 @@ const Activity = () => {
               );
             })}
           </div>
-          {isArchivedTab && isAnyCallArchived(callHistory) && (
-            <div className="my-5">
-              <Button
-                fullWidth
-                variant="contained"
-                disabled={isResetBtnLoading}
-                onClick={() => {
-                  setResetArchivedCalls(true);
-                  setIsResetBtnLoading(true);
-                }}
-              >
-                Reset
-              </Button>
-            </div>
-          )}
 
           {isArchivedTab && !isAnyCallArchived(callHistory) && (
             <div className="flex my-5 justify-center"> No Data Available </div>
@@ -120,6 +110,20 @@ const Activity = () => {
           {!isArchivedTab && !isAnyCallNotArchived(callHistory) && (
             <div className="flex my-5 justify-center"> No Data Available </div>
           )}
+
+          <div className="my-5">
+            <Button
+              fullWidth
+              variant="contained"
+              disabled={isResetBtnLoading}
+              onClick={() => {
+                setIsReset(true);
+                setIsResetBtnLoading(true);
+              }}
+            >
+              Reset
+            </Button>
+          </div>
         </div>
       )}
     </div>

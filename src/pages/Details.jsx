@@ -13,6 +13,7 @@ const Details = () => {
   const [isArchiveCallLoading, setIsArchiveCallLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
+  const { is_archived } = callDetails;
 
   const handleRedirect = () => {
     navigate(`/`, { replace: false });
@@ -28,7 +29,7 @@ const Details = () => {
 
   async function actionToArchiveCall() {
     const variables = {
-      is_archived: true,
+      is_archived: !is_archived,
     };
     await strictFetch(`${BASE_URL}/activities/${id}`, "PATCH", variables);
     setIsArchiveCallLoading(false);
@@ -65,19 +66,17 @@ const Details = () => {
         <div>
           <DetailCard callDetails={callDetails} />
           <div id="archive-call-action" className="mx-2">
-            {callDetails.is_archived && (
-              <Button
-                fullWidth
-                variant="contained"
-                disabled={isArchiveCallLoading}
-                onClick={() => {
-                  setTriggerArchiveCall(true);
-                  setIsArchiveCallLoading(true);
-                }}
-              >
-                Archive Call
-              </Button>
-            )}
+            <Button
+              fullWidth
+              variant="contained"
+              disabled={isArchiveCallLoading}
+              onClick={() => {
+                setTriggerArchiveCall(true);
+                setIsArchiveCallLoading(true);
+              }}
+            >
+              {is_archived ? "Unarchive Call" : "Archive Call"}
+            </Button>
           </div>
         </div>
       )}
