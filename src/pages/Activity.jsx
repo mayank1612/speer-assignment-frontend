@@ -30,10 +30,10 @@ const Activity = () => {
 
   async function resetAllArchivedCalls() {
     await strictFetch(`${BASE_URL}/reset`, "PATCH");
-    setIsResetBtnLoading(false);
 
     // Redirect to Inbox tab
     setTimeout(() => {
+      setIsResetBtnLoading(false);
       setValue(NOT_ARCHIVED_CALLS_TAB_INDEX);
     }, 2000);
   }
