@@ -1,5 +1,9 @@
 import { formatDate } from "./formateDate";
-
+/**
+ *
+ * @param calls Calls data in format - DATA_RECEIVED_FROM_API - present in sampleData.js file
+ * @returns results in format - DATA_REQUIRED_BY_UI - present in sampleData.js file
+ */
 export function groupCallsByDate(calls) {
   const groupedCalls = {};
 
@@ -9,18 +13,40 @@ export function groupCallsByDate(calls) {
 
     // Check if this date is already a key in the groupedCalls object
     if (!groupedCalls[date]) {
-      groupedCalls[date] = [];
+      groupedCalls[date] = { archived: [], notArchived: [] };
     }
 
-    // Add this call to the array for this date if call is not archived
-    if (!call.is_archived) {
-      groupedCalls[date].push(call);
+    // Check 'to' or 'from' because data received from the server is not proper
+    if (call.to || call.from) {
+      if (call.is_archived) {
+        groupedCalls[date].archived.push(call);
+      } else {
+        groupedCalls[date].notArchived.push(call);
+      }
     }
   });
 
-  // Convert the object into an array of objects
-  return Object.keys(groupedCalls).map((date) => ({
+  // Convert the object into an array of objects and sort each callHistory type by time
+  const result = Object.keys(groupedCalls).map((date) => ({
     date: formatDate(date),
-    callHistoryByDate: groupedCalls[date],
+    callHistoryByDate: {
+      archived: groupedCalls[date].archived.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      ),
+      notArchived: groupedCalls[date].notArchived.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      ),
+    },
   }));
+
+  // Sort the array by date in descending order
+  result.sort((a, b) => new Date(b.date) - new Date(a.date));
+  console.log({ result: result });
+  return result;
 }
+
+/**
+ * SAMPLE OUTPUT
+ * --------------------------------
+
+ */

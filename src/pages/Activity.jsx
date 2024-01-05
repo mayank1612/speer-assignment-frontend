@@ -1,14 +1,22 @@
-import { Box, CircularProgress, Tab, Tabs } from "@mui/material";
+import { Box, Button, CircularProgress, Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
-import ContactCard from "../components/ContactCard";
-import { BASE_URL } from "../assets/constants";
+import {
+  ARCHIVED_CALLS_TAB_INDEX,
+  BASE_URL,
+  NOT_ARCHIVED_CALLS_TAB_INDEX,
+} from "../assets/constants";
 import { strictFetch } from "../utils/strictFetch";
 import { groupCallsByDate } from "../utils/groupCallsByDate";
+import ContactCardsByDate from "../components/ContactCardsByDate";
+import { isAnyCallArchived } from "../utils/isAnyCallArchived";
+import { isAnyCallNotArchived } from "../utils/isAnyCallNotArchived";
 
 const Activity = () => {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(NOT_ARCHIVED_CALLS_TAB_INDEX);
   const [callHistory, setCallHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const isArchivedTab = value === ARCHIVED_CALLS_TAB_INDEX;
 
   async function fetchCallHistory() {
     const queryData = await strictFetch(`${BASE_URL}/activities`);
@@ -30,7 +38,7 @@ const Activity = () => {
 
   return (
     <div id="activity-wrapper " className=" bg-white">
-      <div id="subHeader" className="flex">
+      <div id="sub-header" className="flex">
         <div className="flex items-center py-2 px-5 border-solid rounded-br-full w-2/5 shadow-lg font-bold text-gray-600">
           Activity
         </div>
@@ -58,33 +66,36 @@ const Activity = () => {
           <CircularProgress />
         </div>
       ) : (
-        <div id="contact-list" className="bg-gray-100 p-5">
-          {callHistory.map((history) => {
-            const { date, callHistoryByDate } = history;
+        <div id="activity-body" className="bg-gray-100 p-5">
+          <div id="contact-list" className="bg-gray-100">
+            {callHistory.map((history) => {
+              const { date, callHistoryByDate } = history;
+              const { archived, notArchived } = callHistoryByDate;
+              const callLogs = isArchivedTab ? archived : notArchived;
+              return (
+                <ContactCardsByDate
+                  key={date}
+                  date={date}
+                  callLogs={callLogs}
+                />
+              );
+            })}
+          </div>
+          {isArchivedTab && isAnyCallArchived(callHistory) && (
+            <div className="my-5">
+              <Button fullWidth variant="contained">
+                Reset
+              </Button>
+            </div>
+          )}
 
-            // show call history if call logs are present in given date for which is_archived is false
-            return (
-              callHistoryByDate.length > 0 && (
-                <div key={date}>
-                  <div id="date-seperator" className="flex justify-center my-2">
-                    <div className="border-dotted border-2 border-gray-500 my-3 w-full"></div>
-                    <div className="mx-3 text-nowrap text-sm text-gray-500 font-semibold">
-                      {date}
-                    </div>
-                    <div className="border-dotted border-2 border-gray-400 my-3 w-full"></div>
-                  </div>
+          {isArchivedTab && !isAnyCallArchived(callHistory) && (
+            <div className="flex my-5 justify-center"> No Data Available </div>
+          )}
 
-                  {callHistoryByDate.map((callData) => {
-                    return (
-                      <div key={callData.id} className="my-2" id="contact-card">
-                        <ContactCard callData={callData} />
-                      </div>
-                    );
-                  })}
-                </div>
-              )
-            );
-          })}
+          {!isArchivedTab && !isAnyCallNotArchived(callHistory) && (
+            <div className="flex my-5 justify-center"> No Data Available </div>
+          )}
         </div>
       )}
     </div>
