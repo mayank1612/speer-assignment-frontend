@@ -6,7 +6,10 @@ export async function strictFetch(url, method = "GET") {
     },
   });
 
-  const jsonData = await queryData.json();
-
-  return jsonData;
+  try {
+    const jsonData = await queryData.json();
+    return jsonData;
+  } catch (error) {
+    return queryData;
+  }
 }

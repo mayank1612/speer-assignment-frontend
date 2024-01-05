@@ -41,7 +41,6 @@ export function groupCallsByDate(calls) {
 
   // Sort the array by date in descending order
   result.sort((a, b) => new Date(b.date) - new Date(a.date));
-  console.log({ result: result });
   return result;
 }
 

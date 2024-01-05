@@ -15,6 +15,8 @@ const Activity = () => {
   const [value, setValue] = useState(NOT_ARCHIVED_CALLS_TAB_INDEX);
   const [callHistory, setCallHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [resetArchivedCalls, setResetArchivedCalls] = useState(false);
+  const [isResetBtnLoading, setIsResetBtnLoading] = useState(false);
 
   const isArchivedTab = value === ARCHIVED_CALLS_TAB_INDEX;
 
@@ -24,13 +26,27 @@ const Activity = () => {
     const allCalls = groupCallsByDate(queryData);
     setCallHistory(allCalls);
     setLoading(false);
+  }
 
-    return queryData;
+  async function resetAllArchivedCalls() {
+    await strictFetch(`${BASE_URL}/reset`, "PATCH");
+    setIsResetBtnLoading(false);
+
+    // Redirect to Inbox tab
+    setTimeout(() => {
+      setValue(NOT_ARCHIVED_CALLS_TAB_INDEX);
+    }, 2000);
   }
 
   useEffect(() => {
     fetchCallHistory();
   }, [value]);
+
+  useEffect(() => {
+    if (resetArchivedCalls) {
+      resetAllArchivedCalls();
+    }
+  }, [resetArchivedCalls]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -83,7 +99,15 @@ const Activity = () => {
           </div>
           {isArchivedTab && isAnyCallArchived(callHistory) && (
             <div className="my-5">
-              <Button fullWidth variant="contained">
+              <Button
+                fullWidth
+                variant="contained"
+                disabled={isResetBtnLoading}
+                onClick={() => {
+                  setResetArchivedCalls(true);
+                  setIsResetBtnLoading(true);
+                }}
+              >
                 Reset
               </Button>
             </div>
