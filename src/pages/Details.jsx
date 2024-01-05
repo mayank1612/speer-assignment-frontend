@@ -28,8 +28,6 @@ const Details = () => {
     fetchCallDetails();
   }, []);
 
-  console.log({ callDetails });
-
   return (
     <div id="details-wrapper">
       <div id="subHeader" className="flex  bg-white">

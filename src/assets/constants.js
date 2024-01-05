@@ -5,3 +5,9 @@ export const ARCHIVED_CALLS_TAB_INDEX = 1;
 
 export const ARCHIVED_CALLS_KEY = "archived";
 export const NOT_ARCHIVED_CALLS_KEY = "notArchived";
+
+export const callTypeColorMapper = {
+  missed: "error",
+  answered: "success",
+  voicemail: "primary",
+};
