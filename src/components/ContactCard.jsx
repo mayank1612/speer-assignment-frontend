@@ -13,7 +13,7 @@ const ContactCard = ({ callData }) => {
           <CallReceivedIcon sx={{ width: "20px" }} />
         )}
       </div>
-      <div>{from ?? 123547}</div>
+      <div>{from ?? "N.A"}</div>
       <div className="flex items-center font-semibold ml-auto pl-2 border-dotted border-l-2 border-gray-600 text-sm">
         {formatTime(created_at)}
       </div>
